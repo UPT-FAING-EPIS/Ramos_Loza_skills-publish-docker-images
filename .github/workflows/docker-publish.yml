@@ -1,18 +1,24 @@
 name: Docker Publish
-
 on:
   push:
     branches:
       - main
-
-permissions:
-  contents: read
-  packages: write
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
   
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/upt-faing-epis/ramos_loza_skills-publish-docker-images/stackoverflown
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -23,6 +29,4 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: |
-            ghcr.io/upt-faing-epis/ramos_loza_skills-publish-docker-images/stackoverflown:main
-            ghcr.io/upt-faing-epis/ramos_loza_skills-publish-docker-images/stackoverflown:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
