@@ -9,18 +9,21 @@ permissions:
   contents: read
   packages: write
 
-  jobs:
+jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push Docker image
         run: |
-          docker build . --tag ghcr.io/upt-faing-epis/ramos_loza_skills-publish-docker-images/stackoverflown:main
-          docker push ghcr.io/upt-faing-epis/ramos_loza_skills-publish-docker-images/stackoverflown:main
+          docker build . --tag ghcr.io/${{ github.repository_owner }}/stackoverflown:main
+          docker push ghcr.io/${{ github.repository_owner }}/stackoverflown:main
